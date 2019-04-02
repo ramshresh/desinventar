@@ -1,0 +1,3 @@
+php yii migrate/down all --migrationPath=@vendor/dektrium/yii2-user/migrations
+php yii migrate/up --migrationPath=@yii/rbac/migrations
+php yii migrate
