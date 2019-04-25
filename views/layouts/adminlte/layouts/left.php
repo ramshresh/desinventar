@@ -39,27 +39,38 @@
                         'items' => [
                             [
                                 'label' => 'Events', 'icon' => 'file-o', 'url' => ['/datacard/datacard/index'],
-                            ],[
+                            ], [
                                 'label' => 'Add Event', 'icon' => 'file-o', 'url' => ['/datacard/datacard/create'],
-                            ],[
+                            ], [
                                 'label' => 'Manage Events', 'icon' => 'file-o', 'url' => ['/datacard/datacard/manage'],
-                            ],[
+                            ], [
                                 'label' => 'Export Data', 'icon' => 'file-o', 'url' => ['/datacard/datacard/download-page'],
                             ],
 
                         ],
                     ],
-
                     [
                         'label' => 'Query',
                         'icon' => 'filter',
                         'url' => '#',
                         'items' => [
-                            ['label' => 'Data Cards', 'icon' => 'file-code-o', 'url' => ['/query'],],
-
+                            ['label' => 'Query and Downloads', 'icon' => 'file-code-o', 'url' => ['/datacard/query/index'],],
                         ],
                     ],
 
+                    [
+                        'label' => 'Profile Reports',
+                        'icon' => 'share',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => 'Multi-hazard', 'icon' => 'file-code-o', 'url' => ['/datacard/reports/multi-hazard-profile'],],
+//                            ['label' => 'Disaster Type', 'icon' => 'circle-o', 'url' => '#',],
+//                            ['label' => 'Provience', 'icon' => 'file-code-o', 'url' => ['/datacard/reports/by-provience'],],
+//                            ['label' => 'District', 'icon' => 'file-code-o', 'url' => ['/datacard/reports/by-district'],],
+//                            ['label' => 'Municipality', 'icon' => 'file-code-o', 'url' => ['/datacard/reports/by-municipality'],],
+//                            ['label' => 'Disaster Type', 'icon' => 'file-code-o', 'url' => ['/datacard/reports/by-municipality'],],
+                        ],
+                    ],
 
                     [
                         'label' => 'Some tools',
@@ -71,6 +82,7 @@
                             ['label' => 'Debug', 'icon' => 'dashboard', 'url' => ['/debug'],],
                         ],
                     ],
+
 
 //                    [
 //                        'label' => 'Some tools',

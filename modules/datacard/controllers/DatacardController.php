@@ -71,7 +71,7 @@ class DatacardController extends Controller
                     [
                         'actions' => ['index'],
                         'allow' => true,
-                        'roles' => ['?','list-datacard'],
+                        'roles' => ['list-datacard'],
                     ],
                     [
                         'actions' => ['view'],

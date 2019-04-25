@@ -5,7 +5,7 @@
  * Date: 18/03/2019
  * Time: 13:24
  */
-
+use yii\widgets\ActiveForm;
 $this->blocks['content-header'] = 'Query'
 ?>
 <style>
@@ -14,57 +14,47 @@ $this->blocks['content-header'] = 'Query'
     }
 </style>
 <div class="datacard-view">
+
 <div class="row">
+    <?php $form = ActiveForm::begin([
+
+            'options'=>[
+                'method' => 'get',
+                    'class'=>'warn-lose-changes',
+            ]]); ?>
     <div class="col-sm-6">
-        <div class="row">
-            <div class="col-sm-6">
-                <label for="event_name">Disaster Type</label>
-                <br/>
-                <select name="event_name" class="custom-select" multiple>
-                    <option>FIRE</option>
-                    <option>FLOOD</option>
-                    <option>LANDSLIDE</option>
-                    <option>ACCIDENT</option>
-                    <option>THUNDERSTORM</option>
-                    <option>HAIL STORM</option>
-                    <option>COLD WAVE</option>
-                    <option>STRONG WIND</option>
-                </select>
-            </div>
-            <div class="col-sm-6">
-                <label for="event_cause">Cause</label>
-                <br/>
-                <select name="event_cause" class="custom-select" multiple>
-                    <option>DEFORESTATION</option>
-                    <option>DESIGN ERROR</option>
-                    <option>ELECTRIC SHOCK</option>
-                    <option>FLOOD</option>
-                    <option>HEAVY RAIN</option>
-                    <option>HUMAN MISTAKE</option>
-                    <option>LANDSLIDE</option>
-                    <option>RAIN</option>
-                </select>
-            </div>
-        </div>
         <div class="row">
             <div class="col-sm-4">
                 <label for="event_provience">Provience</label>
                 <br/>
-                <select name="event_provience" class="custom-select" multiple>
-                    <option>Provience 1</option>
-                    <option>Provience 2</option>
-                    <option>Provience 3</option>
-                    <option>Provience 4</option>
-                    <option>Provience 5</option>
-                    <option>Provience 6</option>
-                    <option>Provience 7</option>
-                </select>
+                <?= $form->field($model, 'location_state')
+                    ->dropDownList(
+                        $proviences, ['id' => 'provience-id', 'prompt' => 'Select...']
+                    )->label(false);
+                ?>
             </div>
 
             <div class="col-sm-4">
                 <label for="event_district">District</label>
                 <br/>
-                <select name="event_district" class="custom-select" multiple>
+                <?= $form->field($model, 'location_district')->widget(\kartik\depdrop\DepDrop::classname(), [
+                    'options' => ['id' => 'district-id'],
+                    'data' =>[],// isset($districts) ? $districts : [],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'depends' => ['provience-id'],
+                        'placeholder' => 'Select...',
+                        'url' => \yii\helpers\Url::to(['/datacard/location/districts'])
+                    ],
+                    'pluginEvents' => [
+                        "depdrop:init" => "function() { console.log('depdrop:init'); }",
+                        "depdrop:ready" => "function() { console.log('depdrop:ready'); }",
+                        "depdrop:change" => "function(event, id, value, count) { console.log(id); console.log(value); console.log(count); }",
+                        "depdrop:beforeChange" => "function(event, id, value) { console.log('depdrop:beforeChange'); }",
+                        "depdrop:afterChange" => "function(event, id, value) { console.log('depdrop:afterChange'); console.log($('.selected-result-location')); setSelectedLocationRegions(); }",
+                        "depdrop:error" => "function(event, id, value) { console.log('depdrop:error'); }",
+                    ]
+                ])->label(false) ?>
 
                 </select>
             </div>
@@ -72,9 +62,45 @@ $this->blocks['content-header'] = 'Query'
             <div class="col-sm-4">
                 <label for="event_municipality">Municipality</label>
                 <br/>
-                <select name="event_municipality" class="custom-select" multiple>
-
-                </select>
+                <?= $form->field($model, 'location_localbody')->widget(\kartik\depdrop\DepDrop::classname(), [
+                    'options' => ['id' => 'localbody-id'],
+                    'data' => isset($localbodies) ? $localbodies : [],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                        'depends' => ['district-id'],
+                        'placeholder' => 'Select...',
+                        'url' => \yii\helpers\Url::to(['/datacard/location/local-bodies'])
+                    ],
+                    'pluginEvents' => [
+                        "depdrop:init" => "function() { console.log('depdrop:init'); }",
+                        "depdrop:ready" => "function() { console.log('depdrop:ready'); }",
+                        "depdrop:change" => "function(event, id, value, count) { console.log(id); console.log(value); console.log(count); }",
+                        "depdrop:beforeChange" => "function(event, id, value) { console.log('depdrop:beforeChange'); }",
+                        "depdrop:afterChange" => "function(event, id, value) { console.log('depdrop:afterChange'); console.log($('.selected-result-location')); setSelectedLocationRegions(); }",
+                        "depdrop:error" => "function(event, id, value) { console.log('depdrop:error'); }",
+                    ]
+                ])->label(false) ?>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-sm-6">
+                <label for="event_name">Disaster Type</label>
+                <br/>
+                <?= $form->field($model, 'event_type')
+                    ->dropDownList(
+                        $model->getDropdown_eventType(), ['multiple'=>'true','prompt' => 'Select...']
+                    )->label(false);
+                ?>
+            </div>
+            <div class="col-sm-6">
+                <label for="event_cause">Cause</label>
+                <br/>
+                <?= $form->field($model, 'event_cause')
+                    ->dropDownList(
+                        $model->getDropdown_eventCause(), ['multiple'=>'true','prompt' => 'Select...']
+                    )->label(false);
+                ?>
             </div>
         </div>
         <br/>
@@ -86,6 +112,8 @@ $this->blocks['content-header'] = 'Query'
             </div>
         </div>
         <br/>
+
+
         <div class="row">
             <div class="col-sm-6">
                 <small>Select only events with</small>
@@ -170,21 +198,21 @@ $this->blocks['content-header'] = 'Query'
 
         <div class="row">
             <div class="col-sm-12" align="right">
-                <button>View Data</button>
-                <br/>
-                <button>New Query</button>
-                <br/>
-                <button>Save Query</button>
-                <br/>
-                <button>Load Query</button>
+                <div class="form-group">
+                    <?= \yii\helpers\Html::submitButton('Search',
+                        [
+                            'class' => 'btn btn-success',
+                        ]) ?>
+                </div>
             </div>
 
         </div>
     </div>
-
+    <?php ActiveForm::end(); ?>
     <div class="col-sm-6">
         <div id="map" style="border: solid; height: 500px"></div>
     </div>
 </div>
+
 </div>
 

@@ -359,7 +359,6 @@ class Datacard extends \yii\db\ActiveRecord
             'THUNDERSTORM' => 'Thunderstorm',
         ];
     }
-
     public function getDropdown_eventCause()
     {
         return [
@@ -376,7 +375,6 @@ class Datacard extends \yii\db\ActiveRecord
             'ELECTRIC SHOCK' => 'Electric Shock',
         ];
     }
-
     //Data Transformation
     public function getValueOf_createdBy()
     {
@@ -389,14 +387,11 @@ class Datacard extends \yii\db\ActiveRecord
             ->one();
         return (isset($user->username) && ($user->username != '')) ? $user->username : $userId;
     }
-
     public function getValueOf_eventType()
     {
         $list = $this->getDropdown_eventType();
         return isset($list[$this->event_type]) ? $list[$this->event_type] : '';
     }
-
-
     public function getValueOf_locationLocalBody()
     {
         $list = ArrayHelper::map(Localbody::find()
@@ -408,7 +403,6 @@ class Datacard extends \yii\db\ActiveRecord
             ->asArray()->all(), 'ddgn', 'local_bodies');
         return isset($list[$this->location_localbody]) ? $list[$this->location_localbody] : '';
     }
-
     public function getValueOf_locationWardNo()
     {
         $list = ArrayHelper::map(Ward::find()
@@ -420,7 +414,6 @@ class Datacard extends \yii\db\ActiveRecord
             ->asArray()->all(), 'DDGNWW', 'NEW_WARD_N');
         return isset($list[$this->location_wardno]) ? $list[$this->location_wardno] : '';
     }
-
     public function getValueOf_eventCause()
     {
         $list = $this->getDropdown_eventCause();

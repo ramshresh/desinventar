@@ -15,6 +15,9 @@ use yii\web\Controller;
 class ImportController extends Controller
 {
 
+    /**
+     * @return string
+     */
     public function actionExcel()
     {
         $db_fields = [
@@ -126,8 +129,6 @@ class ImportController extends Controller
             ['ecology'];
 
             array_push($row, $ecology); //location_ecology
-
-
             array_push($rows, $row);
         }
 

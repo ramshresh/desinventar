@@ -24,4 +24,36 @@ class DatacardQueryForm extends Model
             // Define validation rules here
         ];
     }
+
+    public function getDropdown_eventType()
+    {
+        $datacardModel = new  Datacard();
+        return $datacardModel->getDropdown_eventType();
+    }
+
+    public function getDropdown_eventCause()
+    {
+        $datacardModel = new  Datacard();
+        return $datacardModel->getDropdown_eventCause();
+    }
+
+    public function search($params){
+        $query = Datacard::find();
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+        $query->andFilterWhere(['like', 'location_state', $this->location_state])
+            ->andFilterWhere(['like', 'location_district', $this->location_district]);
+        return $dataProvider;
+    }
 }
