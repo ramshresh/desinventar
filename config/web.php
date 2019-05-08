@@ -38,6 +38,7 @@ $config = [
             'mailer' => [
                 'sender' => ['desinventar.nset@gmail.com' => 'DESINVENTAR-NSET']
             ],
+
         ],
         'rbac' => 'dektrium\rbac\RbacWebModule',
 

@@ -52,4 +52,10 @@ class Localbody extends \yii\db\ActiveRecord
             'changed_ga_pa' => 'Changed Ga Pa',
         ];
     }
+
+
+    public static function ddgn_from_name($name){
+        $model = self::find()->where('local_bodies = :name', [':name' => $name])->one();
+        if($model)return $model->DDGN;
+    }
 }

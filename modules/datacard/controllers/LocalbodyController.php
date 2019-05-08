@@ -121,10 +121,6 @@ class LocalbodyController extends Controller
         if (($model = Localbody::findOne($id)) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
-
-
 }

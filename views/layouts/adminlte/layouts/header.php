@@ -20,9 +20,8 @@ use yii\helpers\Html;
             <ul class="nav navbar-nav">
 
                 <!-- Tasks: style can be found in dropdown.less -->
-
                 <!-- User Account: style can be found in dropdown.less -->
-
+                <?php if(!Yii::$app->user->isGuest):?>
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="<?= $directoryAsset ?>/img/avatar5.png" class="user-image" alt="User Image"/>
@@ -50,6 +49,7 @@ use yii\helpers\Html;
                         </li>
                     </ul>
                 </li>
+                <?php endif; ?>
 
                 <!-- User Account: style can be found in dropdown.less -->
                 <li>

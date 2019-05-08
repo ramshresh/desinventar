@@ -28,7 +28,8 @@
         "dektrium/yii2-user": "^0.9.0@dev",
         "dektrium/yii2-rbac": "1.0.0-alpha@dev",
         "slavkovrn/yii2-logvisitor": "dev-master",
-        "dmstr/yii2-adminlte-asset": "^2.1"
+        "dmstr/yii2-adminlte-asset": "^2.1",
+        "lucasguo/yii2-import": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

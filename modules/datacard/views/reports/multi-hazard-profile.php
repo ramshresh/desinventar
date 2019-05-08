@@ -11,6 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Profile Reports', 'url' => ['']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <style>
+
     .bss {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 10px;
@@ -33,8 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
     #legend {
         display: inline-block;
         width: 100%;
-        //margin: 0 1em 2em 0;
-        //font-size: 0.85em;
+    / / margin: 0 1 em 2 em 0;
+    / / font-size: 0.85 em;
         vertical-align: top;
 
     }
@@ -47,6 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
         width: 20px;
         position: relative;
     }
+
 </style>
 
 <div class="row">
@@ -158,7 +160,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-sm-12">
                 <div class="bss panel panel-default">
                     <div class="panel-body">
-                        <h5 class="bg-light-blue color-palette">Temposal Behaviour - Deaths</h5>
+                        <h5 class="bg-light-blue color-palette">Temporal Behaviour - Deaths</h5>
                         <div class="chart-area">
                             <canvas id="pie-chart-deaths_temp" width="800" height="100"></canvas>
                         </div>
@@ -170,7 +172,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-sm-12">
                 <div class="bss panel panel-default">
                     <div class="panel-body">
-                        <h5 class="bg-light-blue color-palette">Temposal Behaviour - Datacards</h5>
+                        <h5 class="bg-light-blue color-palette">Temporal Behaviour - Datacards</h5>
                         <div class="chart-area">
                             <canvas id="pie-chart-datacards_temp" width="800" height="100"></canvas>
                         </div>
@@ -183,7 +185,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-sm-12">
                 <div class="bss panel panel-default">
                     <div class="panel-body">
-                        <h5 class="bg-light-blue color-palette">Temposal Behaviour - Directly and Indirectly
+                        <h5 class="bg-light-blue color-palette">Temporal Behaviour - Directly and Indirectly
                             affected</h5>
                         <div class="chart-area">
                             <canvas id="pie-chart-affected_temp" width="800" height="100"></canvas>
@@ -616,10 +618,13 @@ var data_datacards_temp = [];
 var data_affected_temp = [];
 var data_house_destroyed_damaged_temp = [];
 
+
+
 distinct_event_types.forEach(function(event_type) {
             var filterObj = multihazard_summary.filter(function(e) {
                 return e.Event == event_type;
             });
+            
             data_deaths.push(filterObj[0]['Deaths']);
             data_datacards.push(filterObj[0]['DataCards']);
             data_affected.push(filterObj[0]['Affected']);
@@ -634,17 +639,104 @@ distinct_years.forEach(function(Year) {
             data_affected_temp.push(filterObj[0]['Affected']);
             data_house_destroyed_damaged_temp.push(filterObj[0]['Destroyed']+filterObj[0]['Damaged']);
         });
+
+var sortedArray_Deaths = _.sortBy(multihazard_summary,'Deaths').reverse();
+var sortedArray_DataCards = _.sortBy(multihazard_summary,'DataCards').reverse();
+
+function getSliceIndex(arr, column_name, bound_percent){
+    var d = _.map(arr,column_name);
+    var s = _.reduce(d,function(memo, num) {return memo+num;},0);
+    var idx;
+    for(var i=arr.length - 1; i >= 0;i--){
+      var v = arr[i][column_name];
+      var p = (v/s)*100; 
+      console.log('***START***');
+      var l1 =arr.slice(0,i);
+      var l2 =arr.slice(i);
+      var d1 = _.map(l1,column_name);
+      var d2 = _.map(l2,column_name);
+      var s1 = _.reduce(d1,function(memo, num) {return memo+num;},0);
+      var s2 = _.reduce(d2,function(memo, num) {return memo+num;},0);
+      
+      var p1 = (s1/s)*100;
+      var p2 = (s2/s)*100;
+     
+        if(p2>=bound_percent){
+             idx = i;
+            break;     
+        }
+    }
+    return idx;
+}
+
+
+var s_idx_Deaths = getSliceIndex(sortedArray_Deaths,'Deaths',5);
+
+var sortedArray_Deaths_p1 = sortedArray_Deaths.slice(0,s_idx_Deaths);
+var sortedArray_Deaths_p2 = sortedArray_Deaths.slice(s_idx_Deaths);
+
+sortedArray_Deaths_columns = [];
+sortedArray_Deaths_other_columns = [];
+sortedArray_Deaths_values = [];
+sortedArray_Deaths_other_values = [];
+
+sortedArray_Deaths_p1.forEach(
+    function(obj) {  
+            sortedArray_Deaths_columns.push(obj['Event']);
+            sortedArray_Deaths_values.push(obj['Deaths']);    
+    }
+);
+sortedArray_Deaths_p2.forEach(
+    function(obj) {  
+            sortedArray_Deaths_other_columns.push(obj['Event']);
+            sortedArray_Deaths_other_values.push(obj['Deaths']);    
+    }
+);
+sortedArray_Deaths_columns.push('Others');
+sortedArray_Deaths_values.push(_.reduce(sortedArray_Deaths_other_values, function(memo, num) { return memo + num}, 0) );
+
+///
+
+
+var s_idx_DataCards = getSliceIndex(sortedArray_Deaths,'DataCards',5);
+
+var sortedArray_DataCards_p1 = sortedArray_DataCards.slice(0,s_idx_DataCards);
+var sortedArray_DataCards_p2 = sortedArray_DataCards.slice(s_idx_DataCards);
+
+sortedArray_DataCards_columns = [];
+sortedArray_DataCards_other_columns = [];
+sortedArray_DataCards_values = [];
+sortedArray_DataCards_other_values = [];
+
+sortedArray_DataCards_p1.forEach(
+    function(obj) {  
+            sortedArray_DataCards_columns.push(obj['Event']);
+            sortedArray_DataCards_values.push(obj['DataCards']);    
+    }
+);
+sortedArray_DataCards_p2.forEach(
+    function(obj) {  
+            sortedArray_DataCards_other_columns.push(obj['Event']);
+            sortedArray_DataCards_other_values.push(obj['DataCards']);    
+    }
+);
+sortedArray_DataCards_columns.push('Others');
+sortedArray_DataCards_values.push(_.reduce(sortedArray_DataCards_other_values, function(memo, num) { return memo + num}, 0) );
+
+
+
 new Chart(document.getElementById("pie-chart-deaths"), {
             type: 'pie',
             data: {
-              labels: distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
+              labels: sortedArray_Deaths_columns, //distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
               datasets: [{
-                label: "Deaths",
+                label: "mpn65",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                backgroundColor: palette('tol', data_deaths.length).map(function(hex) {
+                backgroundColor: palette('rainbow', data_deaths.length).map(function(hex) {
                     return '#' + hex;
                 }),
-               data: data_deaths//[2478,5267,734,784,433]
+               data: sortedArray_Deaths_values, //data_deaths//[2478,5267,734,784,433]
+               
               }]
             },
             options: {
@@ -662,17 +754,19 @@ new Chart(document.getElementById("pie-chart-deaths"), {
                 }
             }
         });  
+
+
 new Chart(document.getElementById("pie-chart-datacards"), {
             type: 'pie',
             data: {
-              labels: distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
+              labels: sortedArray_DataCards_columns,//distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
               datasets: [{
                 label: "Recorder Datacards",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                backgroundColor: palette('tol', data_datacards.length).map(function(hex) {
+                backgroundColor: palette('mpn65', data_datacards.length).map(function(hex) {
                     return '#' + hex;
                 }),
-               data: data_datacards//[2478,5267,734,784,433]
+               data: sortedArray_DataCards_values,//data_datacards//[2478,5267,734,784,433]
               }]
             },
             options: {
@@ -690,6 +784,8 @@ new Chart(document.getElementById("pie-chart-datacards"), {
                 }
             }
         });   
+
+
 new Chart(document.getElementById("pie-chart-affected"), {
             type: 'pie',
             data: {
@@ -697,7 +793,7 @@ new Chart(document.getElementById("pie-chart-affected"), {
               datasets: [{
                 label: "People Affected",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                backgroundColor: palette('tol', data_affected.length).map(function(hex) {
+                backgroundColor: palette('mpn65', data_affected.length).map(function(hex) {
                     return '#' + hex;
                 }),
                data: data_affected//[2478,5267,734,784,433]
@@ -718,6 +814,7 @@ new Chart(document.getElementById("pie-chart-affected"), {
                 }
             }
         });  
+
 new Chart(document.getElementById("pie-chart-house_destroyed_damaged"), {
             type: 'pie',
             data: {
@@ -725,7 +822,7 @@ new Chart(document.getElementById("pie-chart-house_destroyed_damaged"), {
               datasets: [{
                 label: "Houses Destroyed + Damaged",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                backgroundColor: palette('tol', data_house_destroyed_damaged.length).map(function(hex) {
+                backgroundColor: palette('mpn65', data_house_destroyed_damaged.length).map(function(hex) {
                     return '#' + hex;
                 }),
                data: data_house_destroyed_damaged//[2478,5267,734,784,433]
@@ -746,6 +843,8 @@ new Chart(document.getElementById("pie-chart-house_destroyed_damaged"), {
                 }
             }
         });  
+
+
 new Chart(document.getElementById("pie-chart-deaths_temp"), {
             type: 'line',
             data: {
@@ -756,6 +855,7 @@ new Chart(document.getElementById("pie-chart-deaths_temp"), {
               }]
             }
         });
+
 new Chart(document.getElementById("pie-chart-datacards_temp"), {
             type: 'line',
             data: {

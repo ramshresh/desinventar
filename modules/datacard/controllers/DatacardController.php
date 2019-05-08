@@ -165,7 +165,7 @@ class DatacardController extends Controller
         ]);
     }
 
-    /**
+    /**ch
      * Displays a single Datacard model.
      * @param integer $id
      * @return mixed

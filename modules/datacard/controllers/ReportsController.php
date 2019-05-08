@@ -68,7 +68,25 @@ class ReportsController extends Controller
                                 sum(datacards.damage_infra_road_quantity) as DamagesInRoads_mts')
             ->groupBy('datacards.event_type')
             ->asArray()->all();
-
+        foreach ($compositionOfDisasters as $index=>$row){
+            $compositionOfDisasters[$index]['DataCards'] = (int) $row['DataCards'];
+            $compositionOfDisasters[$index]['Deaths'] = (int) $row['Deaths'];
+            $compositionOfDisasters[$index]['Injured'] = (int) $row['Injured'];
+            $compositionOfDisasters[$index]['Missing'] = (int) $row['Missing'];
+            $compositionOfDisasters[$index]['Affected'] = (int) $row['Affected'];
+            $compositionOfDisasters[$index]['Destroyed'] = (int) $row['Destroyed'];
+            $compositionOfDisasters[$index]['Damaged'] = (int) $row['Damaged'];
+            $compositionOfDisasters[$index]['Relocated'] = (int) $row['Relocated'];
+            $compositionOfDisasters[$index]['Rescued'] = (int) $row['Rescued'];
+            $compositionOfDisasters[$index]['Relieved'] = (int) $row['Relieved'];
+            $compositionOfDisasters[$index]['Losses_nrs'] = (int) $row['Losses_nrs'];
+            $compositionOfDisasters[$index]['Losses_usd'] = (int) $row['Losses_usd'];
+            $compositionOfDisasters[$index]['EducationCenters'] = (int) $row['EducationCenters'];
+            $compositionOfDisasters[$index]['Hospitals'] = (int) $row['Hospitals'];
+            $compositionOfDisasters[$index]['DamagesInCrops_ha'] = (int) $row['DamagesInCrops_ha'];
+            $compositionOfDisasters[$index]['LostCattle'] = (int) $row['LostCattle'];
+            $compositionOfDisasters[$index]['DamagesInRoads_mts'] = (int) $row['DamagesInRoads_mts'];
+        }
         $temporalBehaviour = Datacard::find()->select('YEAR(event_date) as Year,
                                 COUNT(*) as DataCards,
                                 sum(datacards.effect_people_dead_t) as Deaths,

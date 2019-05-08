@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
  * @property bool $isLocked
  *
  * @property int $id
- * @property int $data_card_no
+ * @property string $data_card_no
  * @property string $event_date
  * @property string $event_type
  * @property string $event_magnitude
@@ -43,6 +43,7 @@ use yii\helpers\ArrayHelper;
  * @property int $effect_people_affected_m
  * @property int $effect_people_affected_f
  * @property int $effect_people_affected_t
+ * @property int $effect_people_victim_t
  * @property int $effect_people_rescued_m
  * @property int $effect_people_rescued_f
  * @property int $effect_people_rescued_t
@@ -116,6 +117,7 @@ use yii\helpers\ArrayHelper;
  * @property int $effect_loss_livestock_quantity
  * @property string $effect_loss_livestock_unit
  * @property string $effect_loss_livestock_value
+ * @property string $other_losses
  * @property string $longitude
  * @property string $latitude
  *
@@ -147,12 +149,14 @@ class Datacard extends \yii\db\ActiveRecord
         return [
             ['data_card_no', 'unique', 'targetAttribute' => ['data_card_no'], 'message' => 'Data Card Number must be unique (This value already exists in database!).'],
             ['uuid', 'unique', 'targetAttribute' => ['uuid'], 'message' => 'UUID must be unique (This value already exists in database!).'],
-            [['data_card_no', 'event_date', 'event_type', 'event_cause', 'location_district', 'location_localbody', 'metadata_source', 'metadata_source_date', 'metadata_collected_by'], 'required'],
-            [['data_card_no', 'location_wardno', 'effect_people_dead_m', 'effect_people_dead_f', 'effect_people_dead_t', 'effect_people_injured_m', 'effect_people_injured_f', 'effect_people_injured_t', 'effect_people_missing_m', 'effect_people_missing_f', 'effect_people_missing_t', 'effect_people_affected_m', 'effect_people_affected_f', 'effect_people_affected_t', 'effect_people_rescued_m', 'effect_people_rescued_f', 'effect_people_rescued_t', 'effect_people_relocated_m', 'effect_people_relocated_f', 'effect_people_relocated_t', 'effect_people_relieved_m', 'effect_people_relieved_f', 'effect_people_relieved_t', 'damage_house_building_complete', 'damage_house_building_partial', 'damage_house_shed_complete', 'damage_house_shed_partial', 'damage_infra_road_quantity', 'damage_infra_bridge_quantity', 'damage_infra_electricity_quantity', 'damage_infra_water_quantity', 'damage_infra_sewage_quantity', 'damage_infra_communication_quantity', 'damage_infra_medical_quantity', 'damage_infra_educational_quantity', 'damage_infra_institutions_quantity', 'damage_infra_industries_quantity', 'effect_loss_land_quantity', 'effect_loss_agri_quantity', 'effect_loss_livestock_quantity'], 'integer'],
-            [['event_description', 'comment', 'metadata_source'], 'string'],
-            [['latitude','longitude','damage_house_building_value', 'damage_house_shed_value', 'damage_infra_road_value', 'damage_infra_bridge_value', 'damage_infra_electricity_value', 'damage_infra_water_value', 'damage_infra_sewage_value', 'damage_infra_communication_value', 'damage_infra_medical_value', 'damage_infra_educational_value', 'damage_infra_institutions_value', 'damage_infra_industries_value', 'effect_loss_land_value', 'effect_loss_agri_value', 'effect_loss_livestock_value', 'latitude', 'longitude'], 'number'],
+            [['location_district'], 'district_exists'],
+            [['location_localbody'], 'localunit_exists'],
+            [['data_card_no', 'event_date', 'event_type', 'event_cause', 'location_district',], 'required'],
+            [['location_wardno', 'effect_people_dead_m', 'effect_people_dead_f', 'effect_people_dead_t', 'effect_people_injured_m', 'effect_people_injured_f', 'effect_people_injured_t', 'effect_people_missing_m', 'effect_people_missing_f', 'effect_people_missing_t', 'effect_people_affected_m', 'effect_people_affected_f', 'effect_people_affected_t', 'effect_people_victim_t', 'effect_people_rescued_m', 'effect_people_rescued_f', 'effect_people_rescued_t', 'effect_people_relocated_m', 'effect_people_relocated_f', 'effect_people_relocated_t', 'effect_people_relieved_m', 'effect_people_relieved_f', 'effect_people_relieved_t', 'damage_house_building_complete', 'damage_house_building_partial', 'damage_house_shed_complete', 'damage_house_shed_partial', 'damage_infra_road_quantity', 'damage_infra_bridge_quantity', 'damage_infra_electricity_quantity', 'damage_infra_water_quantity', 'damage_infra_sewage_quantity', 'damage_infra_communication_quantity', 'damage_infra_medical_quantity', 'damage_infra_educational_quantity', 'damage_infra_institutions_quantity', 'damage_infra_industries_quantity', 'effect_loss_land_quantity', 'effect_loss_agri_quantity', 'effect_loss_livestock_quantity'], 'integer'],
+            [['data_card_no','event_description', 'comment', 'metadata_source', 'other_losses'], 'string'],
+            [['latitude', 'longitude', 'damage_house_building_value', 'damage_house_shed_value', 'damage_infra_road_value', 'damage_infra_bridge_value', 'damage_infra_electricity_value', 'damage_infra_water_value', 'damage_infra_sewage_value', 'damage_infra_communication_value', 'damage_infra_medical_value', 'damage_infra_educational_value', 'damage_infra_institutions_value', 'damage_infra_industries_value', 'effect_loss_land_value', 'effect_loss_agri_value', 'effect_loss_livestock_value', 'latitude', 'longitude', 'total_loss_value_rs'], 'number'],
             [['event_date', 'metadata_source_date', 'metadata_collected_date', 'metadata_verified_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'locked_at'], 'safe'],
-            [['event_type', 'event_magnitude', 'event_centre', 'event_cause', 'event_duration', 'location_state', 'location_district', 'location_localbody', 'location_placename', 'location_region', 'location_ecology', 'damage_infra_road_type', 'damage_infra_road_unit', 'damage_infra_bridge_type', 'damage_infra_bridge_unit', 'damage_infra_electricity_type', 'damage_infra_electricity_unit', 'damage_infra_water_type', 'damage_infra_water_unit', 'damage_infra_sewage_type', 'damage_infra_sewage_unit', 'damage_infra_communication_type', 'damage_infra_communication_unit', 'damage_infra_medical_type', 'damage_infra_medical_unit', 'damage_infra_educational_type', 'damage_infra_educational_unit', 'damage_infra_institutions_type', 'damage_infra_institutions_unit', 'damage_infra_industries_type', 'damage_infra_industries_unit', 'total_loss_value_rs', 'total_loss_value_usd', 'metadata_collected_by', 'metadata_verified_by', 'effect_loss_land_unit', 'effect_loss_agri_unit', 'effect_loss_livestock_unit'], 'string', 'max' => 255],
+            [['event_type', 'event_magnitude', 'event_centre', 'event_cause', 'event_duration', 'location_state', 'location_district', 'location_localbody', 'location_placename', 'location_region', 'location_ecology', 'damage_infra_road_type', 'damage_infra_road_unit', 'damage_infra_bridge_type', 'damage_infra_bridge_unit', 'damage_infra_electricity_type', 'damage_infra_electricity_unit', 'damage_infra_water_type', 'damage_infra_water_unit', 'damage_infra_sewage_type', 'damage_infra_sewage_unit', 'damage_infra_communication_type', 'damage_infra_communication_unit', 'damage_infra_medical_type', 'damage_infra_medical_unit', 'damage_infra_educational_type', 'damage_infra_educational_unit', 'damage_infra_institutions_type', 'damage_infra_institutions_unit', 'damage_infra_industries_type', 'damage_infra_industries_unit', 'total_loss_value_usd', 'metadata_collected_by', 'metadata_verified_by', 'effect_loss_land_unit', 'effect_loss_agri_unit', 'effect_loss_livestock_unit'], 'string', 'max' => 255],
         ];
     }
 
@@ -190,6 +194,7 @@ class Datacard extends \yii\db\ActiveRecord
             'effect_people_affected_m' => 'Effect People Affected M',
             'effect_people_affected_f' => 'Effect People Affected F',
             'effect_people_affected_t' => 'Effect People Affected T',
+            'effect_people_victim_t' => 'Effect People Victim T',
             'effect_people_rescued_m' => 'Effect People Rescued M',
             'effect_people_rescued_f' => 'Effect People Rescued F',
             'effect_people_rescued_t' => 'Effect People Rescued T',
@@ -263,6 +268,7 @@ class Datacard extends \yii\db\ActiveRecord
             'effect_loss_livestock_quantity' => 'Effect Loss Livestock Quantity',
             'effect_loss_livestock_unit' => 'Effect Loss Livestock Unit',
             'effect_loss_livestock_value' => 'Effect Loss Livestock Value',
+            'other_losses' => 'Other Losses',
             'latitude' => 'Latitude',
             'longitude' => 'Longitude',
 
@@ -359,6 +365,7 @@ class Datacard extends \yii\db\ActiveRecord
             'THUNDERSTORM' => 'Thunderstorm',
         ];
     }
+
     public function getDropdown_eventCause()
     {
         return [
@@ -375,6 +382,7 @@ class Datacard extends \yii\db\ActiveRecord
             'ELECTRIC SHOCK' => 'Electric Shock',
         ];
     }
+
     //Data Transformation
     public function getValueOf_createdBy()
     {
@@ -387,11 +395,13 @@ class Datacard extends \yii\db\ActiveRecord
             ->one();
         return (isset($user->username) && ($user->username != '')) ? $user->username : $userId;
     }
+
     public function getValueOf_eventType()
     {
         $list = $this->getDropdown_eventType();
         return isset($list[$this->event_type]) ? $list[$this->event_type] : '';
     }
+
     public function getValueOf_locationLocalBody()
     {
         $list = ArrayHelper::map(Localbody::find()
@@ -403,6 +413,7 @@ class Datacard extends \yii\db\ActiveRecord
             ->asArray()->all(), 'ddgn', 'local_bodies');
         return isset($list[$this->location_localbody]) ? $list[$this->location_localbody] : '';
     }
+
     public function getValueOf_locationWardNo()
     {
         $list = ArrayHelper::map(Ward::find()
@@ -414,14 +425,16 @@ class Datacard extends \yii\db\ActiveRecord
             ->asArray()->all(), 'DDGNWW', 'NEW_WARD_N');
         return isset($list[$this->location_wardno]) ? $list[$this->location_wardno] : '';
     }
+
     public function getValueOf_eventCause()
     {
         $list = $this->getDropdown_eventCause();
         return isset($list[$this->event_cause]) ? $list[$this->event_cause] : '';
     }
+
     public function getValueOf_WardCentroid()
     {
-        $coordinates=Ward::find()
+        $coordinates = Ward::find()
             ->select(
                 'LATITUDE,LONGITUDE')
             ->where([
@@ -458,4 +471,49 @@ class Datacard extends \yii\db\ActiveRecord
         }
         return parent::beforeSave($insert); // TODO: Change the autogenerated stub
     }
+
+    public function district_exists($attribute_name, $params)
+    {
+        $value = $this->{$attribute_name};
+        if (count(Region::find()->where('district = :district', [':district' => $value])->one()) == 0) {
+            $this->addError($attribute_name, $value . ' District not found!');
+            return false;
+        }
+        return true;
+    }
+
+
+    public function localunit_exists($attribute_name, $params)
+    {
+        $value = $this->{$attribute_name};
+
+        if (count(Localbody::find()->where('DDGN = :ddgn', [':ddgn' => $value])->one()) == 0) {
+            $this->addError($attribute_name, $value . ' District not found!');
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Method description
+     *
+     * @return mixed The return value
+     */
+    public function beforeValidate()
+    {
+        /*
+                $data_card_no = $this->data_card_no;
+                $i=0;
+                while ($this->data_card_no_exists($data_card_no)) {
+                    $i=$i+1;
+                    $this->data_card_no =$data_card_no.'-'.$i;
+                }*/
+        return parent::beforeValidate();
+    }
+
+    public function data_card_no_exists($data_card_no)
+    {
+        return count(self::find()->where('data_card_no = :data_card_no', [':data_card_no' => $data_card_no])->one()) > 0;
+    }
+
 }
