@@ -642,6 +642,7 @@ distinct_years.forEach(function(Year) {
 
 var sortedArray_Deaths = _.sortBy(multihazard_summary,'Deaths').reverse();
 var sortedArray_DataCards = _.sortBy(multihazard_summary,'DataCards').reverse();
+var sortedArray_Affected = _.sortBy(multihazard_summary,'Affected').reverse();
 
 function getSliceIndex(arr, column_name, bound_percent){
     var d = _.map(arr,column_name);
@@ -649,7 +650,9 @@ function getSliceIndex(arr, column_name, bound_percent){
     var idx;
     for(var i=arr.length - 1; i >= 0;i--){
       var v = arr[i][column_name];
+      var vm1 = arr[i-1][column_name];
       var p = (v/s)*100; 
+      var pm1 = (vm1/s)*100; 
       console.log('***START***');
       var l1 =arr.slice(0,i);
       var l2 =arr.slice(i);
@@ -661,81 +664,68 @@ function getSliceIndex(arr, column_name, bound_percent){
       var p1 = (s1/s)*100;
       var p2 = (s2/s)*100;
      
-        if(p2>=bound_percent){
-             idx = i;
+        if(p2<pm1 && pm1>bound_percent){
+            console.log(['p2,pm1', p2, pm1]);
+            idx = i+1;
+            break;
+        }
+        if(p2>bound_percent){
+            console.log(['p2', p2]);
+            idx = i+1;
             break;     
         }
     }
     return idx;
 }
 
+function pichartData(s_arr,group_key,data_key,bound_percent){    
+    var i = getSliceIndex(s_arr,data_key,bound_percent);
+    
+    var s_arr_p1 = s_arr.slice(0,i);
+    var s_arr_p2 = s_arr.slice(i);
+    
+    s_arr_cols = [];
+    s_arr_oth_cols = [];
+    s_arr_vals = [];
+    s_arr_oth_vals = [];
+    
+    s_arr_p1.forEach(
+        function(obj) {  
+                s_arr_cols.push(obj[group_key]);
+                s_arr_vals.push(obj[data_key]);    
+        }
+    );
+    s_arr_p2.forEach(
+        function(obj) {  
+                s_arr_oth_cols.push(obj[group_key]);
+                s_arr_oth_vals.push(obj[data_key]);    
+        }
+    );
+    s_arr_cols.push('Others');
+    s_arr_vals.push(_.reduce(s_arr_oth_vals, function(memo, num) { return memo + num}, 0) );
+    
+    return {
+      labels: s_arr_cols,
+      data: s_arr_vals  
+    };
+}
 
-var s_idx_Deaths = getSliceIndex(sortedArray_Deaths,'Deaths',5);
-
-var sortedArray_Deaths_p1 = sortedArray_Deaths.slice(0,s_idx_Deaths);
-var sortedArray_Deaths_p2 = sortedArray_Deaths.slice(s_idx_Deaths);
-
-sortedArray_Deaths_columns = [];
-sortedArray_Deaths_other_columns = [];
-sortedArray_Deaths_values = [];
-sortedArray_Deaths_other_values = [];
-
-sortedArray_Deaths_p1.forEach(
-    function(obj) {  
-            sortedArray_Deaths_columns.push(obj['Event']);
-            sortedArray_Deaths_values.push(obj['Deaths']);    
-    }
-);
-sortedArray_Deaths_p2.forEach(
-    function(obj) {  
-            sortedArray_Deaths_other_columns.push(obj['Event']);
-            sortedArray_Deaths_other_values.push(obj['Deaths']);    
-    }
-);
-sortedArray_Deaths_columns.push('Others');
-sortedArray_Deaths_values.push(_.reduce(sortedArray_Deaths_other_values, function(memo, num) { return memo + num}, 0) );
-
-///
-
-
-var s_idx_DataCards = getSliceIndex(sortedArray_Deaths,'DataCards',5);
-
-var sortedArray_DataCards_p1 = sortedArray_DataCards.slice(0,s_idx_DataCards);
-var sortedArray_DataCards_p2 = sortedArray_DataCards.slice(s_idx_DataCards);
-
-sortedArray_DataCards_columns = [];
-sortedArray_DataCards_other_columns = [];
-sortedArray_DataCards_values = [];
-sortedArray_DataCards_other_values = [];
-
-sortedArray_DataCards_p1.forEach(
-    function(obj) {  
-            sortedArray_DataCards_columns.push(obj['Event']);
-            sortedArray_DataCards_values.push(obj['DataCards']);    
-    }
-);
-sortedArray_DataCards_p2.forEach(
-    function(obj) {  
-            sortedArray_DataCards_other_columns.push(obj['Event']);
-            sortedArray_DataCards_other_values.push(obj['DataCards']);    
-    }
-);
-sortedArray_DataCards_columns.push('Others');
-sortedArray_DataCards_values.push(_.reduce(sortedArray_DataCards_other_values, function(memo, num) { return memo + num}, 0) );
-
-
+var pieDataset_Deaths = pichartData(sortedArray_Deaths,'Event','Deaths',5);
+var pieDataset_DataCards = pichartData(sortedArray_DataCards,'Event','DataCards',5);
+var pieDataset_Affected = pichartData(sortedArray_Affected,'Event','Affected',5);
+//var pieDataset_Missing = pichartData(sortedArray_Deaths,'Event','Missing',5);
 
 new Chart(document.getElementById("pie-chart-deaths"), {
             type: 'pie',
             data: {
-              labels: sortedArray_Deaths_columns, //distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
+              labels: pieDataset_Deaths.labels, //distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
               datasets: [{
                 label: "mpn65",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
                 backgroundColor: palette('rainbow', data_deaths.length).map(function(hex) {
                     return '#' + hex;
                 }),
-               data: sortedArray_Deaths_values, //data_deaths//[2478,5267,734,784,433]
+               data: pieDataset_Deaths.data, //data_deaths//[2478,5267,734,784,433]
                
               }]
             },
@@ -759,14 +749,14 @@ new Chart(document.getElementById("pie-chart-deaths"), {
 new Chart(document.getElementById("pie-chart-datacards"), {
             type: 'pie',
             data: {
-              labels: sortedArray_DataCards_columns,//distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
+              labels: pieDataset_DataCards.labels,//distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
               datasets: [{
                 label: "Recorder Datacards",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
                 backgroundColor: palette('mpn65', data_datacards.length).map(function(hex) {
                     return '#' + hex;
                 }),
-               data: sortedArray_DataCards_values,//data_datacards//[2478,5267,734,784,433]
+               data: pieDataset_DataCards.data,//data_datacards//[2478,5267,734,784,433]
               }]
             },
             options: {
@@ -789,14 +779,14 @@ new Chart(document.getElementById("pie-chart-datacards"), {
 new Chart(document.getElementById("pie-chart-affected"), {
             type: 'pie',
             data: {
-              labels: distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
+              labels: pieDataset_Affected.labels,//["Africa", "Asia", "Europe", "Latin America", "North America"],
               datasets: [{
                 label: "People Affected",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
                 backgroundColor: palette('mpn65', data_affected.length).map(function(hex) {
                     return '#' + hex;
                 }),
-               data: data_affected//[2478,5267,734,784,433]
+               data: pieDataset_Affected.data//[2478,5267,734,784,433]
               }]
             },
             options: {
@@ -1153,6 +1143,5 @@ $this->registerCssFile("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.4.0/lea
 
 $this->registerJsFile(Yii::getAlias('@web') . "/lib/geostats/lib/geostats.js");
 $this->registerJsFile("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.core.min.js");
-
 
 ?>
