@@ -99,7 +99,6 @@ class LocationController extends Controller
 
     public static function getDistrictsList($provience)
     {
-
         $rows = Region::find()->select('district')->where(['state' => $provience])->asArray()->all();
 
         $options = [];

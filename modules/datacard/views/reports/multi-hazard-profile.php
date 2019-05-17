@@ -5,7 +5,7 @@
  * Date: 04/04/2019
  * Time: 09:52
  */
-
+// https://codepen.io/bryceyork/pen/mtqAl
 $this->title = 'Profile - Multi-hazard';
 $this->params['breadcrumbs'][] = ['label' => 'Profile Reports', 'url' => ['']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -34,8 +34,8 @@ $this->params['breadcrumbs'][] = $this->title;
     #legend {
         display: inline-block;
         width: 100%;
-    / / margin: 0 1 em 2 em 0;
-    / / font-size: 0.85 em;
+    // margin: 0 1 em 2 em 0;
+    // font-size: 0.85 em;
         vertical-align: top;
 
     }
@@ -86,11 +86,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="bss panel panel-default">
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-2">
                                 <div id="variables"></div>
                                 <div id="legend"></div>
                             </div>
-                            <div class="col-sm-8">
+                            <div class="col-sm-10">
                                 <div class="chart-area">
                                     <div id="variables"></div>
                                     <div id="legend"></div>
@@ -201,7 +201,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="bss panel panel-default">
                     <div class="panel-body">
                         <h5 class="bg-light-blue color-palette">Statistics - Composition of Disasters</h5>
-                        <table class="bss" cellspacing="1" cellpadding="1" border="1">
+                        <table id="tbl_d_comp" class="bss" cellspacing="1" cellpadding="1" border="1">
                             <tr>
                                 <th style="width: 10px">#</th>
                                 <th style="font-weight:bold;width: 110px">Event</th>
@@ -261,7 +261,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="bss panel panel-default">
                     <div class="panel-body">
                         <h5 class="bg-light-blue color-palette">Statistics - Temporal Behaviour</h5>
-                        <table class="bss" cellspacing="1" cellpadding="1" border="1">
+                        <table id="tbl_d_temp" class="bss" cellspacing="1" cellpadding="1" border="1">
                             <tr>
                                 <th style="width: 10px">#</th>
                                 <th style="font-weight:bold;width: 110px">Year</th>
@@ -322,7 +322,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="bss panel panel-default">
                     <div class="panel-body">
                         <h5 class="bg-light-blue color-palette">Statistics - Spatial Distribution</h5>
-                        <table class="bss" cellspacing="1" cellpadding="1" border="1">
+                        <table id="tbl_d_sp" class="bss" cellspacing="1" cellpadding="1" border="1">
                             <thead>
                             <tr>
                                 <th style="width: 10px">#</th>
@@ -618,8 +618,24 @@ var data_datacards_temp = [];
 var data_affected_temp = [];
 var data_house_destroyed_damaged_temp = [];
 
+var pie_labels_all = _.clone(distinct_event_types);
+pie_labels_all.push('Others');
+var eventType_colors =  palette('mpn65', pie_labels_all.length).map(function(hex) {
+                    return '#' + hex;
+                }).reduce(function(result, field, index) {
+                    //https://riptutorial.com/javascript/example/8628/merge-two-array-as-key-value-pair
+  result[pie_labels_all[index]] = field;
+  return result;
+}, {});
 
 
+function getPieColors(labels){
+    var c=[];
+    labels.forEach(function(label) {
+      c.push(eventType_colors[label]);
+    });
+    return c;
+}
 distinct_event_types.forEach(function(event_type) {
             var filterObj = multihazard_summary.filter(function(e) {
                 return e.Event == event_type;
@@ -639,10 +655,13 @@ distinct_years.forEach(function(Year) {
             data_affected_temp.push(filterObj[0]['Affected']);
             data_house_destroyed_damaged_temp.push(filterObj[0]['Destroyed']+filterObj[0]['Damaged']);
         });
-
 var sortedArray_Deaths = _.sortBy(multihazard_summary,'Deaths').reverse();
 var sortedArray_DataCards = _.sortBy(multihazard_summary,'DataCards').reverse();
 var sortedArray_Affected = _.sortBy(multihazard_summary,'Affected').reverse();
+var sortedArray_DamagedDestroyed = _.sortBy(multihazard_summary,'DestroyedDamaged').reverse();
+
+console.log(multihazard_summary);
+console.log(sortedArray_DamagedDestroyed);
 
 function getSliceIndex(arr, column_name, bound_percent){
     var d = _.map(arr,column_name);
@@ -709,22 +728,19 @@ function pichartData(s_arr,group_key,data_key,bound_percent){
       data: s_arr_vals  
     };
 }
-
-var pieDataset_Deaths = pichartData(sortedArray_Deaths,'Event','Deaths',5);
-var pieDataset_DataCards = pichartData(sortedArray_DataCards,'Event','DataCards',5);
-var pieDataset_Affected = pichartData(sortedArray_Affected,'Event','Affected',5);
-//var pieDataset_Missing = pichartData(sortedArray_Deaths,'Event','Missing',5);
+var pieDataset_Deaths = pichartData(sortedArray_Deaths,'Event','Deaths',3);
+var pieDataset_DataCards = pichartData(sortedArray_DataCards,'Event','DataCards',3);
+var pieDataset_Affected = pichartData(sortedArray_Affected,'Event','Affected',3);
+var pieDataset_DestroyedDamaged = pichartData(sortedArray_DamagedDestroyed,'Event','DestroyedDamaged',3);
 
 new Chart(document.getElementById("pie-chart-deaths"), {
             type: 'pie',
             data: {
               labels: pieDataset_Deaths.labels, //distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
               datasets: [{
-                label: "mpn65",
+                label: "Deaths",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                backgroundColor: palette('rainbow', data_deaths.length).map(function(hex) {
-                    return '#' + hex;
-                }),
+                backgroundColor: getPieColors(pieDataset_Deaths.labels),
                data: pieDataset_Deaths.data, //data_deaths//[2478,5267,734,784,433]
                
               }]
@@ -744,8 +760,6 @@ new Chart(document.getElementById("pie-chart-deaths"), {
                 }
             }
         });  
-
-
 new Chart(document.getElementById("pie-chart-datacards"), {
             type: 'pie',
             data: {
@@ -753,9 +767,7 @@ new Chart(document.getElementById("pie-chart-datacards"), {
               datasets: [{
                 label: "Recorder Datacards",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                backgroundColor: palette('mpn65', data_datacards.length).map(function(hex) {
-                    return '#' + hex;
-                }),
+                backgroundColor: getPieColors(pieDataset_DataCards.labels),
                data: pieDataset_DataCards.data,//data_datacards//[2478,5267,734,784,433]
               }]
             },
@@ -774,8 +786,6 @@ new Chart(document.getElementById("pie-chart-datacards"), {
                 }
             }
         });   
-
-
 new Chart(document.getElementById("pie-chart-affected"), {
             type: 'pie',
             data: {
@@ -783,9 +793,7 @@ new Chart(document.getElementById("pie-chart-affected"), {
               datasets: [{
                 label: "People Affected",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                backgroundColor: palette('mpn65', data_affected.length).map(function(hex) {
-                    return '#' + hex;
-                }),
+                backgroundColor: getPieColors(pieDataset_Affected.labels),
                data: pieDataset_Affected.data//[2478,5267,734,784,433]
               }]
             },
@@ -804,18 +812,15 @@ new Chart(document.getElementById("pie-chart-affected"), {
                 }
             }
         });  
-
 new Chart(document.getElementById("pie-chart-house_destroyed_damaged"), {
             type: 'pie',
             data: {
-              labels: distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
+              labels: pieDataset_DestroyedDamaged.labels,//["Africa", "Asia", "Europe", "Latin America", "North America"],
               datasets: [{
                 label: "Houses Destroyed + Damaged",
                 //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                backgroundColor: palette('mpn65', data_house_destroyed_damaged.length).map(function(hex) {
-                    return '#' + hex;
-                }),
-               data: data_house_destroyed_damaged//[2478,5267,734,784,433]
+                backgroundColor: getPieColors(pieDataset_DestroyedDamaged.labels),
+               data: pieDataset_DestroyedDamaged.data//[2478,5267,734,784,433]
               }]
             },
             options: {
@@ -833,7 +838,6 @@ new Chart(document.getElementById("pie-chart-house_destroyed_damaged"), {
                 }
             }
         });  
-
 
 new Chart(document.getElementById("pie-chart-deaths_temp"), {
             type: 'line',
@@ -875,7 +879,7 @@ new Chart(document.getElementById("pie-chart-affected_temp"), {
 */    
  //Global Variables
 
-    var geojsondata, joindata;
+var geojsondata, joindata;
 var vectorLayer_promise = {
         json: function (rootUrl, parameters) {
             return $.ajax({
@@ -972,6 +976,15 @@ var vectorLayer_promise = {
         ,'#E34A33'
         ,'#B30000'
         )
+        colors = [
+        '#EEEEEE'
+        ,'#FEF0D9'
+        ,'#FDCC8A'
+        ,'#FC8D59'
+        ,'#E34A33'
+        ,'#B30000'
+    ];
+        
 
     function defaultStyle(feature) {
         return {
@@ -1044,7 +1057,6 @@ var vectorLayer_promise = {
                 // values for each attribute.
                 var n = variables[j];
                 
-                
                 ranges[n].min = Math.min(data[i][n], ranges[n].min);
                 ranges[n].max = Math.max(data[i][n], ranges[n].max);
             }
@@ -1082,7 +1094,7 @@ var vectorLayer_promise = {
         typeName: 'nset:NepalDistricts',
         //maxFeatures: 200,
         outputFormat: 'text/javascript'
-        , format_options: 'callback: getJson',
+        ,format_options: 'callback: getJson',
         srsName: 'EPSG:4326'
 
     };

@@ -58,8 +58,21 @@
                         ],
                     ],
 
+
                     [
-                        'label' => 'Profile Reports',
+                        'label' => 'Geo-Profile / Overview',
+                        'icon' => 'share',
+                        'url' => '#',
+                        'items' => [
+                            ['label' => 'Nepal', 'icon' => 'file-code-o', 'url' => ['/datacard/overview/nepal'],],
+                            ['label' => 'Provience', 'icon' => 'file-code-o', 'url' => ['/datacard/overview/provience'],],
+                            ['label' => 'Districts', 'icon' => 'file-code-o', 'url' => ['/datacard/overview/districts'],],
+                            ['label' => 'Local Bodies', 'icon' => 'file-code-o', 'url' => ['/datacard/overview/local-bodies'],],
+                        ],
+                    ],
+
+                    [
+                        'label' => 'Disaster Profile / Overview',
                         'icon' => 'share',
                         'url' => '#',
                         'items' => [

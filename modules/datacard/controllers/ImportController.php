@@ -311,18 +311,30 @@ class ImportController extends Controller
         set_time_limit(0);
         ini_set('memory_limit', '20000M');
         $fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-00.xlsx';
-        $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-01.xlsx"; //Duplicate Datacards 77125,82070,82009,82004
-        //----$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-03.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-04.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
-        //$fileName = \Yii::getAlias('@data') . '/splitted/DesInventar2016-02.xlsx';
+        //$fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-01.xlsx"; //Duplicate Datacards 77125,82070,82009,82004
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-02.xlsx"; //Duplicate Datacards 78033,
+        // $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-03.xlsx"; //Duplicate Datacards 91056,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-04.xlsx"; //Duplicate Datacards 94146,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-05.xlsx"; //Duplicate Datacards 98039,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-06.xlsx"; //Duplicate Datacards ,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-07.xlsx"; //Duplicate Datacards 99165,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-08.xlsx"; //Duplicate Datacards 03335,
+        //$fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-09.xlsx"; //Duplicate Datacards ,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-10.xlsx"; //Duplicate Datacards ,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-11.xlsx"; //Duplicate Datacards 97329, 97330, 97332, 97333
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-12.xlsx"; //Duplicate Datacards 97334,97331
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-13.xlsx"; //Duplicate Datacards 09632,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-14.xlsx"; //Duplicate Datacards 06427,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-15.xlsx"; //Duplicate Datacards 100348,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-16.xlsx"; //Duplicate Datacards 091597,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-17.xlsx"; //Duplicate Datacards 110318,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-18.xlsx"; //Duplicate Datacards ,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-19.xlsx"; //Duplicate Datacards 120062,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-20.xlsx"; //Duplicate Datacards 120907,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-21.xlsx"; //Duplicate Datacards 150259,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-22.xlsx"; //Duplicate Datacards 120002,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-23.xlsx"; //Duplicate Datacards 08442,
+        // Done $fileName = \Yii::getAlias('@data') . "/splitted/DesInventar2016-24.xlsx"; //Duplicate Datacards ,
         $config = [];
         $data = \moonland\phpexcel\Excel::widget([
             'mode' => 'import',
@@ -333,6 +345,7 @@ class ImportController extends Controller
         ]);
 
         $datacards_rows = [];
+        $datacards_errors = [];
         $flag = true;
         foreach ($data as $row) {
             $datacard = new  Datacard();
@@ -386,6 +399,7 @@ class ImportController extends Controller
                 $flag = false;
                 echo json_encode($datacard->errors) . '<br />';
                 echo json_encode($datacard->attributes). '<br />';
+                array_push($datacards_errors, [$datacard->errors, $datacard->attributes]);
             }
         }
         if($flag){
@@ -399,9 +413,12 @@ class ImportController extends Controller
             } catch (Exception $e) {
                 // # if error occurs then rollback all transactions
                 $transaction->rollBack();
-                echo 'rolled back<br />';
+                echo 'rolled back:  Try Catch Exception<br />';
                 echo json_encode($e).'<br />';
             }
+        }else{
+            echo 'Validation Error<br />';
+            echo json_encode($datacards_errors).'<br />';
         }
     }
 

@@ -56,6 +56,9 @@ class ReportsController extends Controller
                                 sum(datacards.effect_people_affected_t) as Affected,
                                 sum(datacards.damage_house_building_complete) as Destroyed,
                                 sum(datacards.damage_house_building_partial) as Damaged,
+                                
+                                sum(datacards.damage_house_building_partial)+sum(datacards.damage_house_building_complete) as DestroyedDamaged,
+                                
                                 sum(datacards.effect_people_relocated_t) as Relocated,
                                 sum(datacards.effect_people_rescued_t) as Rescued,
                                 sum(datacards.effect_people_relieved_t) as Relieved,
@@ -76,6 +79,7 @@ class ReportsController extends Controller
             $compositionOfDisasters[$index]['Affected'] = (int) $row['Affected'];
             $compositionOfDisasters[$index]['Destroyed'] = (int) $row['Destroyed'];
             $compositionOfDisasters[$index]['Damaged'] = (int) $row['Damaged'];
+            $compositionOfDisasters[$index]['DestroyedDamaged'] = (int) $row['DestroyedDamaged'];
             $compositionOfDisasters[$index]['Relocated'] = (int) $row['Relocated'];
             $compositionOfDisasters[$index]['Rescued'] = (int) $row['Rescued'];
             $compositionOfDisasters[$index]['Relieved'] = (int) $row['Relieved'];
