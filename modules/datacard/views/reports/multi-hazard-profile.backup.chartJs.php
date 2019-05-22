@@ -59,11 +59,6 @@ $this->params['breadcrumbs'][] = $this->title;
     #legenddiv {
         height: 150px;
     }
-
-    .amcharts-chart-div > a {
-        display: none !important;
-    }
-
 </style>
 
 <div class="row">
@@ -125,16 +120,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         Disasters</strong></h4>
             </div>
         </div>
-
         <div class="row">
             <div class="col-sm-6">
                 <div class="bss panel panel-default">
                     <div class="panel-body">
                         <h5 class="bg-light-blue color-palette">Deaths</h5>
                         <div class="chart-area">
-                            <div id="chartdiv-pieDeaths" style="height: 400px; width: 100%"></div>
-                            <br />
-                            <div id="legenddiv-pieDeaths" style="height: 200px; width: 100%"></div>
+                            <canvas id="pie-chart-deaths" width="800" height="450"></canvas>
                         </div>
                     </div>
                 </div>
@@ -144,15 +136,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="panel-body">
                         <h5 class="bg-light-blue color-palette">Datacards</h5>
                         <div class="chart-area">
-                            <div id="chartdiv-pieDataCards" style="height: 400px; width: 100%"></div>
-                            <br />
-                            <div id="legenddiv-pieDataCards" style="height: 200px; width: 100%"></div>
+                            <canvas id="pie-chart-datacards" width="800" height="450"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-sm-6">
                 <div class="bss panel panel-default">
@@ -761,6 +750,59 @@ var pieDataset_DataCards = pichartData(sortedArray_DataCards,'Event','DataCards'
 var pieDataset_Affected = pichartData(sortedArray_Affected,'Event','Affected',3);
 var pieDataset_DestroyedDamaged = pichartData(sortedArray_DamagedDestroyed,'Event','DestroyedDamaged',3);
 
+new Chart(document.getElementById("pie-chart-deaths"), {
+            type: 'pie',
+            data: {
+              labels: pieDataset_Deaths.labels, //distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
+              datasets: [{
+                label: "Deaths",
+                //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                backgroundColor: getPieColors(pieDataset_Deaths.labels),
+               data: pieDataset_Deaths.data, //data_deaths//[2478,5267,734,784,433]
+               
+              }]
+            },
+            options: {
+              title: {
+                display: true,
+                text: 'Deaths'
+              },
+              legend: {
+                display: true,
+                position: 'left',
+                labels: {
+                    fontColor: 'rgb(255, 99, 132)',
+                    fontSize: 10
+                    }
+                }
+            }
+        });  
+new Chart(document.getElementById("pie-chart-datacards"), {
+            type: 'pie',
+            data: {
+              labels: pieDataset_DataCards.labels,//distinct_event_types,//["Africa", "Asia", "Europe", "Latin America", "North America"],
+              datasets: [{
+                label: "Recorder Datacards",
+                //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                backgroundColor: getPieColors(pieDataset_DataCards.labels),
+               data: pieDataset_DataCards.data,//data_datacards//[2478,5267,734,784,433]
+              }]
+            },
+            options: {
+              title: {
+                display: true,
+                text: 'Datacards'
+              },
+              legend: {
+                display: true,
+                position: 'left',
+                labels: {
+                    fontColor: 'rgb(255, 99, 132)',
+                    fontSize: 10
+                    }
+                }
+            }
+        });   
 new Chart(document.getElementById("pie-chart-affected"), {
             type: 'pie',
             data: {
@@ -846,63 +888,6 @@ new Chart(document.getElementById("pie-chart-affected_temp"), {
             }
         });
 
-/* Create PieChart - Deaths */
-var am4_deaths = [];
-console.log(pieDataset_Deaths);
-pieDataset_Deaths.labels.forEach(function (v,i) { 
-    console.log([v,i]);
-    am4_deaths.push({
-    'label':v,
-    'value':pieDataset_Deaths.data[i]
-    }); 
- });
-am4core.useTheme(am4themes_animated);
-var chartPieDeaths = am4core.create("chartdiv-pieDeaths", am4charts.PieChart3D);
-chartPieDeaths.hiddenState.properties.opacity = 0; // this creates initial fade-in
-chartPieDeaths.legend = new am4charts.Legend();
-chartPieDeaths.data = am4_deaths;
-var seriesPieDeaths = chartPieDeaths.series.push(new am4charts.PieSeries3D());
-seriesPieDeaths.dataFields.value = "value";
-seriesPieDeaths.dataFields.category = "label";
-seriesPieDeaths.legend = new am4charts.Legend();
-/* Create a separate container to put legend in */
-var legendContainerPieDeaths = am4core.create("legenddiv-pieDeaths", am4core.Container);
-legendContainerPieDeaths.width = am4core.percent(100);
-legendContainerPieDeaths.height = am4core.percent(100);
-chartPieDeaths.legend.parent = legendContainerPieDeaths;
-seriesPieDeaths.slices.template.events.once("inited", function(event){
-    console.log(event.target.dataItem.categoryX);
-        event.target.fill = eventType_colors[(event.target.dataItem.category)];
-    });
-
-/* Create PieChart - DataCards */
-var am4_datacards = [];
-console.log(pieDataset_DataCards);
-pieDataset_DataCards.labels.forEach(function (v,i) { 
-    console.log([v,i]);
-    am4_datacards.push({
-    'label':v,
-    'value':pieDataset_DataCards.data[i]
-    }); 
- });
-am4core.useTheme(am4themes_animated);
-var chartPieDataCards = am4core.create("chartdiv-pieDataCards", am4charts.PieChart3D);
-chartPieDataCards.hiddenState.properties.opacity = 0; // this creates initial fade-in
-chartPieDataCards.legend = new am4charts.Legend();
-chartPieDataCards.data = am4_datacards;
-var seriesPieDataCards = chartPieDataCards.series.push(new am4charts.PieSeries3D());
-seriesPieDataCards.dataFields.value = "value";
-seriesPieDataCards.dataFields.category = "label";
-seriesPieDataCards.legend = new am4charts.Legend();
-/* Create a separate container to put legend in */
-var legendContainerPieDataCards = am4core.create("legenddiv-pieDataCards", am4core.Container);
-legendContainerPieDataCards.width = am4core.percent(100);
-legendContainerPieDataCards.height = am4core.percent(100);
-chartPieDataCards.legend.parent = legendContainerPieDataCards;
-seriesPieDataCards.slices.template.events.once("inited", function(event){
-    console.log(event.target.dataItem.categoryX);
-        event.target.fill = eventType_colors[(event.target.dataItem.category)];
-    });
 
 //////////////
 
