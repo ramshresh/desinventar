@@ -333,7 +333,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php endforeach; ?>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
