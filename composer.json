@@ -29,7 +29,9 @@
         "dektrium/yii2-rbac": "1.0.0-alpha@dev",
         "slavkovrn/yii2-logvisitor": "dev-master",
         "dmstr/yii2-adminlte-asset": "^2.1",
-        "lucasguo/yii2-import": "*"
+        "lucasguo/yii2-import": "*",
+        "kartik-v/yii2-field-range": "*",
+        "kartik-v/yii2-date-range": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

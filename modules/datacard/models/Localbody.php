@@ -58,4 +58,9 @@ class Localbody extends \yii\db\ActiveRecord
         $model = self::find()->where('local_bodies = :name', [':name' => $name])->one();
         if($model)return $model->DDGN;
     }
+
+    public static function name_from_ddgn($ddgn){
+        $model = self::find()->where('DDGN = :ddgn', [':ddgn' => $ddgn])->one();
+        if($model)return $model->local_bodies;
+    }
 }

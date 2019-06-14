@@ -46,7 +46,13 @@ if (Yii::$app->controller->action->id === 'login') {
             .form-group {
                 margin-bottom: 2px;
             }
+            .input-group-addon,.form-control{
+                height: 16px;
+                padding: 1px 3px;
+                font-size: 9px;
+                border-radius: 2px;
 
+            }
             .form-control {
                 display: block;
                 width: 100%;
@@ -54,6 +60,7 @@ if (Yii::$app->controller->action->id === 'login') {
                 padding: 1px 3px;
                 font-size: 9px;
                 border-radius: 2px;
+
             }
             h3, .h3 {
                 margin-top: 5px;
@@ -68,7 +75,7 @@ if (Yii::$app->controller->action->id === 'login') {
         </style>
 
         <style>
-            .datacard-create, .datacard-update, .datacard-view, .card{
+            .datacard-create, .datacard-update, .datacard-view {
                 background: #fcf8e3;
                 padding: 10px;
                 position:relative;
@@ -78,6 +85,21 @@ if (Yii::$app->controller->action->id === 'login') {
             {
                 width:100%;
                 resize: none;
+            }
+
+            .datacard-listcard{
+                background: #f0f0f0;
+                padding: 10px;
+                margin: 15px;
+                position:relative;
+                box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+            }
+            span.sub{
+                vertical-align: sub;
+                font-size: smaller;
+            }
+            .hidden {
+                display: none;
             }
         </style>
     </head>

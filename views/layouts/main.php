@@ -94,7 +94,7 @@ AppAsset::register($this);
 
     </style>
     <style>
-        .datacard-create, .datacard-update, .datacard-view, .card{
+        .datacard-create, .datacard-update, .datacard-view{
             background: #fcf8e3;
             padding: 10px;
             position:relative;
@@ -104,6 +104,13 @@ AppAsset::register($this);
         {
             width:100%;
             resize: none;
+        }
+
+        .datacard-listcard{
+            background: #f0b279;
+            padding: 10px;
+            position:relative;
+            box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
         }
     </style>
     <style>

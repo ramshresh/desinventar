@@ -1117,7 +1117,8 @@ var vectorLayer_promise = {
     group = new L.featureGroup().addTo(map);
 
     ////////////////////////////
-    var rootUrl = 'http://127.0.0.1:8080/geoserver/nset/ows';
+   // var rootUrl = 'http://127.0.0.1:8080/geoserver/nset/ows';
+    var rootUrl = 'http://192.168.100.178:8080/geoserver/nset/ows';
     var defaultParameters = {
         service: 'WFS',
         version: '1.0.0',
